@@ -34,7 +34,7 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-background dark overflow-x-hidden relative">
+    <div className="min-h-screen bg-background/85 dark overflow-x-hidden relative">
       <MatrixBackground />
       
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
@@ -91,15 +91,15 @@ export default function App() {
         {/* Stats Section */}
         <div className="px-6 mt-8 mb-8">
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-card border border-border rounded-2xl p-4 text-center">
+            <div className="bg-card/90 border border-border rounded-2xl p-4 text-center">
               <div className="text-2xl text-primary mb-1">24</div>
               <div className="text-xs text-foreground/60">Completed</div>
             </div>
-            <div className="bg-card border border-border rounded-2xl p-4 text-center">
+            <div className="bg-card/90 border border-border rounded-2xl p-4 text-center">
               <div className="text-2xl text-accent mb-1">85%</div>
               <div className="text-xs text-foreground/60">Success Rate</div>
             </div>
-            <div className="bg-card border border-border rounded-2xl p-4 text-center">
+            <div className="bg-card/90 border border-border rounded-2xl p-4 text-center">
               <div className="text-2xl text-primary mb-1">12</div>
               <div className="text-xs text-foreground/60">Streak Days</div>
             </div>

@@ -1,41 +1,52 @@
+import { useEffect, useState } from 'react';
 import { X, Lightbulb } from 'lucide-react';
 import { motion } from 'motion/react';
+import { supabase } from '../../lib/supabase';
 
 interface QuickTipModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const securityTips = [
-  {
-    title: "Enable Two-Factor Authentication",
-    tip: "Add an extra layer of security by enabling 2FA on all your important accounts. Use authenticator apps instead of SMS when possible.",
-    icon: "🔐"
-  },
-  {
-    title: "Use Strong Passwords",
-    tip: "Create passwords with at least 12 characters, mixing uppercase, lowercase, numbers, and symbols. Never reuse passwords across accounts.",
-    icon: "🔑"
-  },
-  {
-    title: "Verify Links Before Clicking",
-    tip: "Hover over links to see the actual URL before clicking. Be wary of shortened URLs and always verify the sender's identity.",
-    icon: "🔗"
-  },
-  {
-    title: "Keep Software Updated",
-    tip: "Regularly update your operating system and applications. Security patches often fix vulnerabilities that hackers exploit.",
-    icon: "🔄"
-  },
-  {
-    title: "Be Cautious with Public WiFi",
-    tip: "Avoid accessing sensitive information on public WiFi networks. Use a VPN when connecting to untrusted networks.",
-    icon: "📡"
-  }
-];
+interface QuickTip {
+  id: number;
+  category: string;
+  tip_title: string;
+  tip_text: string;
+  emoji: string;
+  image: string | null;
+}
 
 export function QuickTipModal({ isOpen, onClose }: QuickTipModalProps) {
-  const randomTip = securityTips[Math.floor(Math.random() * securityTips.length)];
+  const [tip, setTip] = useState<QuickTip | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const fetchRandomTip = async () => {
+      setLoading(true);
+      
+      const { data, error } = await supabase
+        .from('quick_tips')
+        .select('*');
+
+      if (error) {
+        console.error('Error fetching tips:', error);
+        setLoading(false);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        const randomIndex = Math.floor(Math.random() * data.length);
+        setTip(data[randomIndex]);
+      }
+      
+      setLoading(false);
+    };
+
+    fetchRandomTip();
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -70,25 +81,41 @@ export function QuickTipModal({ isOpen, onClose }: QuickTipModalProps) {
           <h2 className="text-foreground">Quick Security Tip</h2>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <span className="text-4xl">{randomTip.icon}</span>
-            <h3 className="text-primary">{randomTip.title}</h3>
-          </div>
+        {loading ? (
+          <div className="py-8 text-center text-foreground/60">Loading tip...</div>
+        ) : tip ? (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              {tip.image ? (
+                <img 
+                  src={tip.image} 
+                  alt={tip.tip_title}
+                  className="w-12 h-12 rounded-xl object-cover border border-border"
+                />
+              ) : (
+                <span className="text-4xl">{tip.emoji}</span>
+              )}
+              <h3 className="text-primary">{tip.tip_title}</h3>
+            </div>
 
-          <p className="text-foreground/80 leading-relaxed">
-            {randomTip.tip}
-          </p>
+            <p className="text-foreground/80 leading-relaxed">
+              {tip.tip_text}
+            </p>
 
-          <div className="pt-4 mt-4 border-t border-border">
-            <button
-              onClick={onClose}
-              className="w-full py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              Got it!
-            </button>
+            <div className="pt-4 mt-4 border-t border-border">
+              <button
+                onClick={onClose}
+                className="w-full py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                Got it!
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="py-4 text-center text-foreground/60">
+            No tips available.
+          </div>
+        )}
       </motion.div>
     </div>
   );

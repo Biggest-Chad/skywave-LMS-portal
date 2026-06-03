@@ -21,7 +21,7 @@ export function SecurityCard({ title, subtitle, image, category }: SecurityCardP
       className={`relative w-80 aspect-[16/9] rounded-2xl overflow-hidden cursor-pointer border bg-gradient-to-br ${categoryColors[category]} backdrop-blur-sm flex-shrink-0`}
     >
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${image})` }}>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/40 to-transparent" />
       </div>
 
       <div className="relative h-full flex flex-col justify-end p-5">
